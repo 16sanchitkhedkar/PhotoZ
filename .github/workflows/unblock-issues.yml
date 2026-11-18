@@ -1,0 +1,36 @@
+name: Unblock issues
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  issues: write
+
+jobs:
+  unblock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const closed = context.payload.issue.number;
+            const { owner, repo } = context.repo;
+            const issues = await github.paginate(github.rest.issues.listForRepo,
+              { owner, repo, state: 'open', per_page: 100 });
+            const blockers = (body) => {
+              const line = (body || '').split('\n').find(l => /\*\*blocked-by:\*\*/i.test(l));
+              return line ? [...line.matchAll(/#(\d+)/g)].map(m => +m[1]) : [];
+            };
+            for (const i of issues) {
+              if (i.pull_request || i.labels.some(l => l.name === 'ready')) continue;
+              const deps = blockers(i.body);
+              if (!deps.includes(closed)) continue;
+              const states = await Promise.all(deps.map(n =>
+                github.rest.issues.get({ owner, repo, issue_number: n }).then(r => r.data.state)));
+              if (states.every(s => s === 'closed')) {
+                await github.rest.issues.addLabels({ owner, repo, issue_number: i.number, labels: ['ready'] });
+                await github.rest.issues.createComment({ owner, repo, issue_number: i.number,
+                  body: `Unblocked: all blockers closed (${deps.map(n => '#' + n).join(', ')}). Labeled \`ready\`.` });
+              }
+            }
