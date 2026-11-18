@@ -224,7 +224,6 @@ __marimo__/
 
 # Project-Specific
 IMPLEMENTATION_PLAN.md
-.10x/*
 data/
 preds/*
 runs/
@@ -237,3 +236,4 @@ kaggle.json
 *.parquet
 .DS_Store
 reports/**/tmp
+.python-version
