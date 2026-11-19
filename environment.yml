@@ -1,0 +1,25 @@
+name: photoz
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.13
+  - pytorch=2.15.0            # with pytorch-cuda=12.x on the laptop
+  - torchvision=0.29.2
+  - numpy
+  - pandas
+  - pyarrow
+  - scipy
+  - scikit-learn
+  - astropy
+  - healpy
+  - matplotlib
+  - pyyaml
+  - requests
+  - tqdm
+  - pip
+  - pip:
+      - datasets
+      - huggingface_hub
+      - -e .[dev]

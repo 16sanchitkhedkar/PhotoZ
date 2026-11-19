@@ -1,0 +1,53 @@
+[project]
+name = "photoz"
+version = "0.1.0"
+description = "Calculating redshift of galaxies from photometry"
+readme = "README.md"
+authors = [
+    { name = "Sanchit Khedkar", email = "16sanchitkhedkar@gmail.com" },
+    { name = "Mohammadsaleh Mohammadsalim Khatri", email = "salehkhatri29@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pandas",
+    "pyarrow",
+    "scipy",
+    "scikit-learn>=1.4",
+    "torch",
+    "torchvision",
+    "astropy",
+    "healpy",
+    "pyyaml",
+    "datasets",
+    "huggingface_hub",
+    "requests",
+    "tqdm",
+    "matplotlib"
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-timeout", "ruff", "pre-commit", "nbstripout"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+photoz-train = "photoz.models.train:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E","F","I","B","UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+timeout = 300
+markers = ["gpu: needs CUDA", "data: needs real data in data/", "slow: > 30 s"]
+addopts = "-ra"
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
